@@ -10,30 +10,21 @@ jobs:
 
       - name: Unzip Source
         run: |
-          unzip -o "*.zip" || echo "No zip found"
+          unzip -o "*.zip" || echo "Không thấy file zip"
           ls -R
 
-      - name: Install Theos & SDK (One Step)
-        run: |
-          # Cài đặt Theos bản ổn định nhất
-          export THEOS=~/theos
-          git clone --recursive https://github.com/theos/theos.git $THEOS
-          
-          # Tải SDK bằng lệnh của chính Theos (Tránh lỗi định dạng tar)
-          curl -ksL https://github.com/theos/sdks/raw/master/iPhoneOS14.4.sdk.tar.xz -o $THEOS/sdks/sdk.tar.xz
-          tar -xf $THEOS/sdks/sdk.tar.xz -C $THEOS/sdks/
-          rm $THEOS/sdks/sdk.tar.xz
-          
-          echo "THEOS=$THEOS" >> $GITHUB_ENV
+      - name: Setup Theos & SDK
+        uses: theos/setup-theos-action@v1
+        with:
+          sdk-version: '14.5'
 
       - name: Build TIPA
         run: |
-          export THEOS=~/theos
-          # Tự động tìm Makefile và nấu file
+          # Robot sẽ tự tìm Makefile và thực hiện lệnh 'make'
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: Mod_Game_Thanh_Pham
+          name: Thanh_Pham_Mod_Dau_Tay
           path: "**/packages/*.tipa"
