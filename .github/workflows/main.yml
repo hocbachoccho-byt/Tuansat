@@ -1,0 +1,31 @@
+name: Build Mod Game
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Unzip Source
+        run: |
+          unzip *.zip
+          ls -R # Kiểm tra danh sách file sau khi giải nén
+
+      - name: Setup Theos
+        run: |
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          echo "THEOS=/opt/theos" >> $GITHUB_ENV
+
+      - name: Build TIPA
+        run: |
+          export THEOS=/opt/theos
+          # Tự động tìm Makefile trong mọi thư mục con để build
+          find . -name Makefile -execdir make package FINALPACKAGE=1 \;
+        
+      - name: Upload Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: Mod_Hoan_Chinh_Cai_Duoc
+          path: "**/packages/*.tipa"
