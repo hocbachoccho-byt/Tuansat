@@ -10,22 +10,22 @@ jobs:
 
       - name: Unzip Source
         run: |
-          unzip -o "*.zip" || echo "No zip found"
+          unzip -o "*.zip" || echo "Không thấy file zip"
           ls -R
 
       - name: Setup Theos
-        # Thêm @v1.1 là chìa khóa để robot tìm thấy công cụ
-        uses: theos/setup-theos@v1.1
+        # Đây là địa chỉ chính xác để không còn lỗi "repository not found"
+        uses: theos/setup-theos@master
         with:
           sdk-version: '14.5'
 
       - name: Build TIPA
         run: |
-          # Tự động tìm Makefile trong các thư mục con và build
+          # Tìm và build file từ mã nguồn bạn lấy trên mạng
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: Mod_Thanh_Pham_Cua_Ban
+          name: Thanh_Pham_Mod_Game
           path: "**/packages/*.tipa"
