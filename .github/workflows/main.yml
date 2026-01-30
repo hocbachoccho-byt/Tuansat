@@ -10,26 +10,30 @@ jobs:
 
       - name: Unzip Source
         run: |
-          unzip -o "*.zip" || echo "Không tìm thấy file zip"
+          unzip -o "*.zip" || echo "No zip found"
           ls -R
 
-      - name: Setup Theos (Ultra Fast)
+      - name: Install Theos & SDK (One Step)
         run: |
-          # Tải bản Theos rút gọn để tránh lỗi submodule
-          git clone --depth 1 https://github.com/theos/theos.git ~/theos
-          # Tải trực tiếp SDK từ link dự phòng
-          mkdir -p ~/theos/sdks
-          curl -ksL https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz | tar -xf - -C ~/theos/sdks
-          echo "THEOS=~/theos" >> $GITHUB_ENV
+          # Cài đặt Theos bản ổn định nhất
+          export THEOS=~/theos
+          git clone --recursive https://github.com/theos/theos.git $THEOS
+          
+          # Tải SDK bằng lệnh của chính Theos (Tránh lỗi định dạng tar)
+          curl -ksL https://github.com/theos/sdks/raw/master/iPhoneOS14.4.sdk.tar.xz -o $THEOS/sdks/sdk.tar.xz
+          tar -xf $THEOS/sdks/sdk.tar.xz -C $THEOS/sdks/
+          rm $THEOS/sdks/sdk.tar.xz
+          
+          echo "THEOS=$THEOS" >> $GITHUB_ENV
 
       - name: Build TIPA
         run: |
           export THEOS=~/theos
-          # Lệnh này sẽ tìm Makefile và tự nấu file cho bạn
+          # Tự động tìm Makefile và nấu file
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: Thanh_Pham_TIPA_Moi
+          name: Mod_Game_Thanh_Pham
           path: "**/packages/*.tipa"
