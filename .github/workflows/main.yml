@@ -14,18 +14,18 @@ jobs:
           ls -R
 
       - name: Setup Theos
-        # Đây là địa chỉ chuẩn đã sửa lỗi "repository not found"
-        uses: theos/setup-theos@v1
+        # Thêm @v1.1 là chìa khóa để robot tìm thấy công cụ
+        uses: theos/setup-theos@v1.1
         with:
           sdk-version: '14.5'
 
       - name: Build TIPA
         run: |
-          # Robot sẽ tự lùng sục Makefile và nấu file cho bạn
+          # Tự động tìm Makefile trong các thư mục con và build
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: Thanh_Pham_Mod_Game
+          name: Mod_Thanh_Pham_Cua_Ban
           path: "**/packages/*.tipa"
