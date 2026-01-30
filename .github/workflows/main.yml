@@ -11,7 +11,7 @@ jobs:
       - name: Unzip Source
         run: |
           unzip *.zip
-          ls -R # Kiểm tra danh sách file sau khi giải nén
+          ls -R
 
       - name: Setup Theos
         run: |
@@ -21,7 +21,6 @@ jobs:
       - name: Build TIPA
         run: |
           export THEOS=/opt/theos
-          # Tự động tìm Makefile trong mọi thư mục con để build
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
