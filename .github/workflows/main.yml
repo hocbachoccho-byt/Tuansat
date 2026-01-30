@@ -7,30 +7,29 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - name: Unzip Source
         run: |
-          unzip -o "*.zip" || echo "No zip file found"
+          unzip -o "*.zip" || echo "Không tìm thấy file zip"
           ls -R
 
-      - name: Setup Theos & SDK
+      - name: Setup Theos (Ultra Fast)
         run: |
-          # Cài đặt Theos nhanh
-          git clone --recursive https://github.com/theos/theos.git ~/theos
-          # Tải nhanh SDK cần thiết để tránh lỗi kết nối
+          # Tải bản Theos rút gọn để tránh lỗi submodule
+          git clone --depth 1 https://github.com/theos/theos.git ~/theos
+          # Tải trực tiếp SDK từ link dự phòng
+          mkdir -p ~/theos/sdks
           curl -ksL https://github.com/theos/sdks/raw/master/iPhoneOS14.5.sdk.tar.xz | tar -xf - -C ~/theos/sdks
           echo "THEOS=~/theos" >> $GITHUB_ENV
 
       - name: Build TIPA
         run: |
           export THEOS=~/theos
-          # Tự động tìm Makefile và build
+          # Lệnh này sẽ tìm Makefile và tự nấu file cho bạn
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: Thanh_Pham_TIPA
+          name: Thanh_Pham_TIPA_Moi
           path: "**/packages/*.tipa"
