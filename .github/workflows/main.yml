@@ -10,21 +10,24 @@ jobs:
 
       - name: Unzip Source
         run: |
-          unzip -o "*.zip" || echo "Không thấy file zip"
-          ls -R
+          unzip -o "*.zip" || echo "Không tìm thấy file zip"
+          # Lệnh này giúp robot nhìn thấy file Makefile bạn lấy trên mạng
+          ls -R 
 
       - name: Setup Theos & SDK
         uses: theos/setup-theos-action@v1
         with:
+          # SDK 14.5 là bản "quốc dân", tương thích với hầu hết code trên mạng
           sdk-version: '14.5'
 
       - name: Build TIPA
         run: |
-          # Robot sẽ tự tìm Makefile và thực hiện lệnh 'make'
+          # Ép robot sử dụng đúng SDK đã cài đặt
+          export THEOS_DEVICE_IP=localhost
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: Thanh_Pham_Mod_Dau_Tay
+          name: File_Mod_Cua_Ban
           path: "**/packages/*.tipa"
