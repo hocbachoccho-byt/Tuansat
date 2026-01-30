@@ -10,24 +10,22 @@ jobs:
 
       - name: Unzip Source
         run: |
-          unzip -o "*.zip" || echo "Không tìm thấy file zip"
-          # Lệnh này giúp robot nhìn thấy file Makefile bạn lấy trên mạng
-          ls -R 
+          unzip -o "*.zip" || echo "No zip found"
+          ls -R
 
-      - name: Setup Theos & SDK
-        uses: theos/setup-theos-action@v1
+      - name: Setup Theos
+        # Đây là địa chỉ chuẩn đã sửa lỗi "repository not found"
+        uses: theos/setup-theos@v1
         with:
-          # SDK 14.5 là bản "quốc dân", tương thích với hầu hết code trên mạng
           sdk-version: '14.5'
 
       - name: Build TIPA
         run: |
-          # Ép robot sử dụng đúng SDK đã cài đặt
-          export THEOS_DEVICE_IP=localhost
+          # Robot sẽ tự lùng sục Makefile và nấu file cho bạn
           find . -name Makefile -execdir make package FINALPACKAGE=1 \;
         
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
-          name: File_Mod_Cua_Ban
+          name: Thanh_Pham_Mod_Game
           path: "**/packages/*.tipa"
